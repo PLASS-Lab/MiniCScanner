@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniCScanner", "MiniCScanner\MiniCScanner.vcxproj", "{6043BE65-AA97-454D-AC94-7E83610F75BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Debug|x64.ActiveCfg = Debug|x64
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Debug|x64.Build.0 = Debug|x64
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Debug|x86.ActiveCfg = Debug|Win32
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Debug|x86.Build.0 = Debug|Win32
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Release|x64.ActiveCfg = Release|x64
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Release|x64.Build.0 = Release|x64
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Release|x86.ActiveCfg = Release|Win32
+		{6043BE65-AA97-454D-AC94-7E83610F75BB}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9D7C941-C64D-47AD-A7A4-8C84F2065FC1}
+	EndGlobalSection
+EndGlobal
