@@ -3,8 +3,6 @@
  *                                   2020. 5. 11               *
  ***************************************************************/
 
-
-
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -15,9 +13,6 @@
 enum tsymbol tnum[NO_KEYWORD] = {
     tconst,    telse,     tif,     tint,     treturn,   tvoid,     twhile
 };
-
-
-
 
 char* tokenName[] = {
     "!",        "!=",      "%",       "%=",     "%ident",   "%number",
@@ -31,14 +26,18 @@ char* tokenName[] = {
     "==",       ">",       ">=",      "[",      "]",        "eof",
     /* 24         25         26        27         28         29        */
     //   ...........    word symbols ................................. //
-    /* 30         31         32        33         34         35        */
     "const",    "else",     "if",      "int",     "return",  "void",
-    /* 36         37         38        39                              */
-    "while",    "{",        "||",       "}"
+    /* 30         31         32        33         34         35        */
+    "while",    "{",        "||",       "}",      "char",    "double",
+    /* 36         37         38        39         40         41        */
+    "for",      "switch",   "case",   "default",  "continue", "break"
+    /* 42       43          44        45          46          47       */
 };
 
 char* keyword[NO_KEYWORD] = {
-    "const",  "else",    "if",    "int",    "return",  "void",    "while"
+    /* 정수, 실수, 문자열 등의 keyword 추가 */
+    "const", "else",   "if",  "int",    "return", "void",    "while",
+    "char",  "double", "for", "switch", "case",   "default", "continue", "break"
 };
 
 struct tokenType scanner(FILE *sourceFile)
@@ -67,7 +66,8 @@ struct tokenType scanner(FILE *sourceFile)
                 token.number = tnum[index];
             else {                     // not found, identifier exit
                 token.number = tident;
-                strcpy_s(token.value.id, ID_LENGTH, id);
+                strcpy(token.value.id,id);
+                //strcpy_s(token.value.id, ID_LENGTH, id);
             }
         }  // end of identifier or keyword
         else if (isdigit(ch)) {  // number
@@ -277,4 +277,30 @@ void writeToken(struct tokenType token, FILE *outputFile)
         fprintf(outputFile, "Token %10s ( %3d, %12s )\n", tokenName[token.number], token.number, "");
     }
     
+}
+
+// File을 open하는 함수
+FILE* fileOpen(char *filename)
+{
+    char file_path[30] = "../Examples/";
+    strcat(file_path, filename);
+    FILE* pFile = fopen(file_path, "r");
+    return pFile;
+}
+
+int main()
+{
+    struct tokenType token;
+    //char token[50][50];
+    char filename[30] = "mod.mc";
+    int index = 0;
+    FILE* pFile = fileOpen(filename);
+    if(pFile == NULL)
+    {
+        return 0;
+    }
+    token = scanner(pFile);
+    printf("%d %s %d\n", token.number, token.value.id, token.value.num);
+    fclose(pFile);
+    return 0;
 }

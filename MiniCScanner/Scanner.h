@@ -11,10 +11,8 @@
 
 #include <stdio.h>
 
-#define NO_KEYWORD 7
+#define NO_KEYWORD 15
 #define ID_LENGTH 12
-
-
 
 struct tokenType {
     int number;
@@ -51,6 +49,6 @@ int hexValue(char ch);
 void lexicalError(int n);
 struct tokenType scanner(FILE *sourceFile);
 void writeToken(struct tokenType token, FILE* outputFile);
-
+FILE* fileOpen(char *filename);
 #endif // !SCANNER_H
 
