@@ -36,9 +36,12 @@ enum tsymbol {
     /* 24         25          26        27           28         29     */
     //   ...........    word symbols ................................. //
     /* 30         31          32        33           34         35     */
-    tconst, telse, tif, tint, treturn, tvoid,
-    /* 36         37          38        39                             */
-    twhile, tlbrace, tor, trbrace
+    tconst,       telse,      tif,      tint,        treturn,   tvoid,
+    /* 36         37          38        39           40         41     */
+    twhile,       tlbrace,    tor,      trbrace,     tchar,     tdouble,
+    /* 42         43          44        45           46         47     */
+    tfor,         tswitch,    tcase,    tdefault,    tcontinue, tbreak
+
 };
 
 

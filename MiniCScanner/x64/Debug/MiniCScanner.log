@@ -1,0 +1,5 @@
+﻿  MiniCScannerTester.c
+C:\Users\speci\OneDrive\바탕 화면\MiniCScanner\MiniCScanner\MiniCScannerTester.c(58,10): warning C4473: 'printf' : not enough arguments passed for format string
+C:\Users\speci\OneDrive\바탕 화면\MiniCScanner\MiniCScanner\MiniCScannerTester.c(58,10): message : placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+C:\Users\speci\OneDrive\바탕 화면\MiniCScanner\MiniCScanner\MiniCScannerTester.c(58,10): message : the missing variadic argument 1 is required by format string '%c'
+  MiniCScanner.vcxproj -> C:\Users\speci\OneDrive\바탕 화면\MiniCScanner\x64\Debug\MiniCScanner.exe

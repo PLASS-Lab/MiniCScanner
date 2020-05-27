@@ -18,7 +18,8 @@ void icgError(int n);
 int main(int argc, char *argv[])
 {
 
-	char fileName[30] = "", buffer[30] = "";
+	char fileName[30] = "";
+	char buffer[30] = "";
 	struct tokenType token;
 	int errorNo = 0;
 	char *fileNamePtr = NULL, *context = NULL;
@@ -54,9 +55,10 @@ int main(int argc, char *argv[])
 	
 	do {
 		token = scanner(sourceFile);
+		printf("%c");
 
 		// write on console
-		/*
+		
 		if (token.number == tident) {
 			printf("Token %10s ( %3d, %12s )\n", tokenName[token.number], token.number, token.value.id);
 		}
@@ -66,7 +68,7 @@ int main(int argc, char *argv[])
 		else {
 			printf("Token %10s ( %3d, %12s )\n", tokenName[token.number], token.number, "");
 		}
-		*/
+		
 		
 		writeToken(token, outputFile);
 

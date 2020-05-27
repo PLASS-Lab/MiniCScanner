@@ -11,7 +11,8 @@
 
 
 enum tsymbol tnum[NO_KEYWORD] = {
-    tconst,    telse,     tif,     tint,     treturn,   tvoid,     twhile
+    tconst,    telse,     tif,     tint,     treturn,   tvoid,     twhile,
+    tchar,  tdouble, tfor, tswitch, tcase,   tdefault, tcontinue, tbreak
 };
 
 char* tokenName[] = {
@@ -50,24 +51,28 @@ struct tokenType scanner(FILE *sourceFile)
 
     do {
         while (isspace(ch = fgetc(sourceFile)));	// state 1: skip blanks
+        printf("%c", ch);
         if (superLetter(ch)) { // identifier or keyword
             i = 0;
             do {
                 if (i < ID_LENGTH) id[i++] = ch;
                 ch = fgetc(sourceFile);
             } while (superLetterOrDigit(ch));
+            // identifier의 길이는 12를 넘을 수 없다
             if (i >= ID_LENGTH) lexicalError(1);
             id[i] = '\0';
             ungetc(ch, sourceFile);  //  retract
+
             // find the identifier in the keyword table
             for (index = 0; index < NO_KEYWORD; index++)
                 if (!strcmp(id, keyword[index])) break;
+
             if (index < NO_KEYWORD)    // found, keyword exit
                 token.number = tnum[index];
             else {                     // not found, identifier exit
                 token.number = tident;
-                strcpy(token.value.id,id);
-                //strcpy_s(token.value.id, ID_LENGTH, id);
+                //strcpy(token.value.id,id);
+                strcpy_s(token.value.id, ID_LENGTH, id);
             }
         }  // end of identifier or keyword
         else if (isdigit(ch)) {  // number
@@ -75,119 +80,119 @@ struct tokenType scanner(FILE *sourceFile)
             token.value.num = getNumber(sourceFile, ch);
         }
         else switch (ch) {  // special character
-        case '/':
-            ch = fgetc(sourceFile);
-            if (ch == '*')			// text comment
-                do {
-                    while (ch != '*') ch = fgetc(sourceFile);
-                    ch = fgetc(sourceFile);
-                } while (ch != '/');
-            else if (ch == '/')		// line comment
-                while (fgetc(sourceFile) != '\n');
-            else if (ch == '=')  token.number = tdivAssign;
-            else {
-                token.number = tdiv;
-                ungetc(ch, sourceFile); // retract
+            case '/':
+                ch = fgetc(sourceFile);
+                if (ch == '*')			// text comment
+                    do {
+                        while (ch != '*') ch = fgetc(sourceFile);
+                        ch = fgetc(sourceFile);
+                    } while (ch != '/');
+                else if (ch == '/')		// line comment
+                    while (fgetc(sourceFile) != '\n');
+                else if (ch == '=')  token.number = tdivAssign;
+                else {
+                    token.number = tdiv;
+                    ungetc(ch, sourceFile); // retract
+                }
+                break;
+            case '!':
+                ch = fgetc(sourceFile);
+                if (ch == '=')  token.number = tnotequ;
+                else {
+                    token.number = tnot;
+                    ungetc(ch, sourceFile); // retract
+                }
+                break;
+            case '%':
+                ch = fgetc(sourceFile);
+                if (ch == '=') {
+                    token.number = tremAssign;
+                }
+                else {
+                    token.number = tremainder;
+                    ungetc(ch, sourceFile);
+                }
+                break;
+            case '&':
+                ch = fgetc(sourceFile);
+                if (ch == '&')  token.number = tand;
+                else {
+                    lexicalError(2);
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '*':
+                ch = fgetc(sourceFile);
+                if (ch == '=')  token.number = tmulAssign;
+                else {
+                    token.number = tmul;
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '+':
+                ch = fgetc(sourceFile);
+                if (ch == '+')  token.number = tinc;
+                else if (ch == '=') token.number = taddAssign;
+                else {
+                    token.number = tplus;
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '-':
+                ch = fgetc(sourceFile);
+                if (ch == '-')  token.number = tdec;
+                else if (ch == '=') token.number = tsubAssign;
+                else {
+                    token.number = tminus;
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '<':
+                ch = fgetc(sourceFile);
+                if (ch == '=') token.number = tlesse;
+                else {
+                    token.number = tless;
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '=':
+                ch = fgetc(sourceFile);
+                if (ch == '=')  token.number = tequal;
+                else {
+                    token.number = tassign;
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '>':
+                ch = fgetc(sourceFile);
+                if (ch == '=') token.number = tgreate;
+                else {
+                    token.number = tgreat;
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '|':
+                ch = fgetc(sourceFile);
+                if (ch == '|')  token.number = tor;
+                else {
+                    lexicalError(3);
+                    ungetc(ch, sourceFile);  // retract
+                }
+                break;
+            case '(': token.number = tlparen;         break;
+            case ')': token.number = trparen;         break;
+            case ',': token.number = tcomma;          break;
+            case ';': token.number = tsemicolon;      break;
+            case '[': token.number = tlbracket;       break;
+            case ']': token.number = trbracket;       break;
+            case '{': token.number = tlbrace;         break;
+            case '}': token.number = trbrace;         break;
+            case EOF: token.number = teof;            break;
+            default: {
+                printf("Current character : %c", ch);
+                lexicalError(4);
+                break;
             }
-            break;
-        case '!':
-            ch = fgetc(sourceFile);
-            if (ch == '=')  token.number = tnotequ;
-            else {
-                token.number = tnot;
-                ungetc(ch, sourceFile); // retract
-            }
-            break;
-        case '%':
-            ch = fgetc(sourceFile);
-            if (ch == '=') {
-                token.number = tremAssign;
-            }
-            else {
-                token.number = tremainder;
-                ungetc(ch, sourceFile);
-            }
-            break;
-        case '&':
-            ch = fgetc(sourceFile);
-            if (ch == '&')  token.number = tand;
-            else {
-                lexicalError(2);
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '*':
-            ch = fgetc(sourceFile);
-            if (ch == '=')  token.number = tmulAssign;
-            else {
-                token.number = tmul;
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '+':
-            ch = fgetc(sourceFile);
-            if (ch == '+')  token.number = tinc;
-            else if (ch == '=') token.number = taddAssign;
-            else {
-                token.number = tplus;
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '-':
-            ch = fgetc(sourceFile);
-            if (ch == '-')  token.number = tdec;
-            else if (ch == '=') token.number = tsubAssign;
-            else {
-                token.number = tminus;
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '<':
-            ch = fgetc(sourceFile);
-            if (ch == '=') token.number = tlesse;
-            else {
-                token.number = tless;
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '=':
-            ch = fgetc(sourceFile);
-            if (ch == '=')  token.number = tequal;
-            else {
-                token.number = tassign;
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '>':
-            ch = fgetc(sourceFile);
-            if (ch == '=') token.number = tgreate;
-            else {
-                token.number = tgreat;
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '|':
-            ch = fgetc(sourceFile);
-            if (ch == '|')  token.number = tor;
-            else {
-                lexicalError(3);
-                ungetc(ch, sourceFile);  // retract
-            }
-            break;
-        case '(': token.number = tlparen;         break;
-        case ')': token.number = trparen;         break;
-        case ',': token.number = tcomma;          break;
-        case ';': token.number = tsemicolon;      break;
-        case '[': token.number = tlbracket;       break;
-        case ']': token.number = trbracket;       break;
-        case '{': token.number = tlbrace;         break;
-        case '}': token.number = trbrace;         break;
-        case EOF: token.number = teof;            break;
-        default: {
-            printf("Current character : %c", ch);
-            lexicalError(4);
-            break;
-        }
 
         } // switch end
     } while (token.number == tnull);
@@ -266,7 +271,7 @@ int hexValue(char ch)
 }
 
 void writeToken(struct tokenType token, FILE *outputFile)
-{
+{   // 
     if (token.number == tident) {
         fprintf(outputFile, "Token %10s ( %3d, %12s )\n", tokenName[token.number], token.number, token.value.id);
     }
@@ -277,30 +282,4 @@ void writeToken(struct tokenType token, FILE *outputFile)
         fprintf(outputFile, "Token %10s ( %3d, %12s )\n", tokenName[token.number], token.number, "");
     }
     
-}
-
-// File을 open하는 함수
-FILE* fileOpen(char *filename)
-{
-    char file_path[30] = "../Examples/";
-    strcat(file_path, filename);
-    FILE* pFile = fopen(file_path, "r");
-    return pFile;
-}
-
-int main()
-{
-    struct tokenType token;
-    //char token[50][50];
-    char filename[30] = "mod.mc";
-    int index = 0;
-    FILE* pFile = fileOpen(filename);
-    if(pFile == NULL)
-    {
-        return 0;
-    }
-    token = scanner(pFile);
-    printf("%d %s %d\n", token.number, token.value.id, token.value.num);
-    fclose(pFile);
-    return 0;
 }
